@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-22T19:21:55+11:00"
+    "timestamp": "2018-11-22T19:42:29+11:00"
   },
   "software": {
     "base": {
@@ -36,7 +36,7 @@
       },
       "install": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake \r\nmake install"
+        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install"
       }
     },
     "system_packages": [
@@ -50,7 +50,7 @@
         "download_type": "http(s)",
         "source_url": "https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.2.tar.gz",
         "destination": "/home/app/src",
-        "extraction_command": "tar xzpf",
+        "extraction_command": "tar -xzpf",
         "path_to_extracted": "nagios-4.4.2"
       }
     ],
