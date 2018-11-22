@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-22T20:20:12+11:00"
+    "timestamp": "2018-11-23T08:51:21+11:00"
   },
   "software": {
     "base": {
@@ -32,11 +32,11 @@
     "scripts": {
       "start": {
         "language": "sh",
-        "content": "#!/bin/sh\r\nnagios -f /home/app/nagios3/nagios.cfg &\r\nsleep 3600\r\n"
+        "content": "#!/bin/sh\r\n\r\n/usr/local/nagios/bin/nagios  /usr/local/nagios/etc/nagios.cfg &\r\necho $! > /tmp/nagios.pid\r\n\r\n"
       },
       "install": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\nmkdir /usr/local/nagios/etc/\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagios_admin $nagios_admin_password"
+        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\nmkdir /usr/local/nagios/etc/\r\nmake install-config\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagios_admin $nagios_admin_password\r\n\r\nln -s /home/app/var /usr/local/nagios/var\r\nmkdir /usr/local/nagios/var/rw/\r\n\r\nrm -r /home/app/src"
       }
     },
     "system_packages": [
