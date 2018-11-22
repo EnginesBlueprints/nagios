@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-23T10:20:33+11:00"
+    "timestamp": "2018-11-23T10:22:52+11:00"
   },
   "software": {
     "base": {
@@ -32,11 +32,11 @@
     "scripts": {
       "install": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\n\r\n"
+        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\n\r\necho $nagios_admin_password >/home/app/password\r\n"
       },
-      "post_install": {
+      "first_run": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\n#cp -r /usr/local/nagios/etc /home/fs/\r\n#rm -r /usr/local/nagios/etc\r\nln -s /home/fs/etc /usr/local/nagios/\r\ncd /home/app/src\r\nmake install-config\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagios_admin $nagios_admin_password\r\ncp -r /usr/local/nagios/var /home/fs/\r\nrm -r /usr/local/nagios/var\r\nln -s /home/fs/var /usr/local/nagios/"
+        "content": "#!/bin/sh\r\n\r\n#cp -r /usr/local/nagios/etc /home/fs/\r\n#rm -r /usr/local/nagios/etc\r\nln -s /home/fs/etc /usr/local/nagios/\r\ncd /home/app/src\r\nmake install-config\r\nnagios_admin_password=`cat /home/app/password`\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagios_admin $nagios_admin_password\r\nrm /home/app/password\r\ncp -r /usr/local/nagios/var /home/fs/\r\nrm -r /usr/local/nagios/var\r\nln -s /home/fs/var /usr/local/nagios/"
       }
     },
     "system_packages": [
