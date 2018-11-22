@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-22T19:42:29+11:00"
+    "timestamp": "2018-11-22T20:20:12+11:00"
   },
   "software": {
     "base": {
@@ -36,7 +36,7 @@
       },
       "install": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install"
+        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\nmkdir /usr/local/nagios/etc/\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagios_admin $nagios_admin_password"
       }
     },
     "system_packages": [
@@ -87,6 +87,17 @@
           "permissions": "rw",
           "user": "_Engines_Builder(data_uid)",
           "group": "_Engines_Builder(data_gid)"
+        }
+      }
+    ],
+    "environment_variables": [
+      {
+        "name": "nagios_admin_password",
+        "build_time_only": true,
+        "input": {
+          "type": "password_with_confirmation",
+          "label": "nagios_admin password",
+          "comment": "password nagios_admin user"
         }
       }
     ],
