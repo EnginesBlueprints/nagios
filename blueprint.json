@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-23T08:53:55+11:00"
+    "timestamp": "2018-11-23T08:56:31+11:00"
   },
   "software": {
     "base": {
@@ -123,6 +123,25 @@
       {
         "path": "/home/app/var",
         "volume_name": "var"
+      }
+    ],
+    "actionators": [
+      {
+        "name": "change_na_password",
+        "label": "Change Nagios Admin password",
+        "return_type": "plain_text",
+        "variables": [
+          {
+            "name": "password",
+            "input": {
+              "type": "password_with_confirmation"
+            }
+          }
+        ],
+        "script": {
+          "language": "sh",
+          "content": "#!/bin/sh\r\nhtpasswd  -b /usr/local/nagios/etc/htpasswd.users nagios_admin $password"
+        }
       }
     ],
     "framework_specific": {
