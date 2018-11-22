@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-22T18:08:25+11:00"
+    "timestamp": "2018-11-22T19:21:55+11:00"
   },
   "software": {
     "base": {
@@ -36,14 +36,20 @@
       },
       "install": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\ncp -r /etc/nagios /home/app\r\ncp -r /etc/nagios-plugins /home/app\r\nmkdir -p /home/fs/var/lib/nagios\r\nmkdir -p /home/fs/var/log/nagios\r\nmkdir -p /home/fs/var/cache/nagios\r\nmkdir -p /home/fs/var/lib/nagios/spool/checkresults\r\n\r\n"
+        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake \r\nmake install"
       }
     },
+    "system_packages": [
+      {
+        "package": "libgd-dev"
+      }
+    ],
     "installed_packages": [
       {
         "name": "nagios-4.4.2.tar.gz",
         "download_type": "http(s)",
         "source_url": "https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.2.tar.gz",
+        "destination": "/home/app/src",
         "extraction_command": "tar xzpf",
         "path_to_extracted": "nagios-4.4.2"
       }
@@ -106,6 +112,13 @@
         "path": "/home/app/var",
         "volume_name": "var"
       }
-    ]
+    ],
+    "framework_specific": {
+      "apache_httpd_configurations": [
+        {
+          "content": "ScriptAlias /nagios/cgi-bin \"/usr/local/nagios/sbin\"\r\n\r\n<Directory \"/usr/local/nagios/sbin\">\r\n\r\n   Options ExecCGI\r\n   AllowOverride None\r\n   <IfVersion >= 2.3>\r\n      <RequireAll>\r\n         Require all granted\r\n         AuthName \"Nagios Access\"\r\n         AuthType Basic\r\n         AuthUserFile /usr/local/nagios/etc/htpasswd.users\r\n         Require valid-user\r\n      </RequireAll>\r\n   </IfVersion>\r\n   <IfVersion < 2.3>\r\n      Order allow,deny\r\n      Allow from all\r\n      AuthName \"Nagios Access\"\r\n      AuthType Basic\r\n      AuthUserFile /usr/local/nagios/etc/htpasswd.users\r\n      Require valid-user\r\n   </IfVersion>\r\n</Directory>\r\n\r\nAlias /nagios \"/usr/local/nagios/share\"\r\n\r\n<Directory \"/usr/local/nagios/share\">\r\n   Options None\r\n   AllowOverride None\r\n   <IfVersion >= 2.3>\r\n      <RequireAll>\r\n         Require all granted\r\n         AuthName \"Nagios Access\"\r\n         AuthType Basic\r\n         AuthUserFile /usr/local/nagios/etc/htpasswd.users\r\n         Require valid-user\r\n      </RequireAll>\r\n   </IfVersion>\r\n   <IfVersion < 2.3>\r\n      Order allow,deny\r\n      Allow from all\r\n      AuthName \"Nagios Access\"\r\n      AuthType Basic\r\n      AuthUserFile /usr/local/nagios/etc/htpasswd.users\r\n      Require valid-user\r\n   </IfVersion>\r\n</Directory>"
+        }
+      ]
+    }
   }
 }
