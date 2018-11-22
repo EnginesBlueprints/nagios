@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-23T08:56:31+11:00"
+    "timestamp": "2018-11-23T09:04:38+11:00"
   },
   "software": {
     "base": {
@@ -36,7 +36,7 @@
       },
       "install": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\nmkdir /usr/local/nagios/etc/\r\nmake install-config\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagios_admin $nagios_admin_password\r\n\r\nln -s /home/app/var /usr/local/nagios/var\r\nmkdir /usr/local/nagios/var/rw/\r\n\r\nrm -r /home/app/src"
+        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\nln -s /home/app/etc /usr/local/nagios/etc\r\nmake install-config\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagios_admin $nagios_admin_password\r\n\r\nln -s /home/app/var /usr/local/nagios/var\r\nmkdir /usr/local/nagios/var/rw/\r\n\r\nrm -r /home/app/src"
       }
     },
     "system_packages": [
@@ -67,23 +67,23 @@
     "service_configurations": [
       {
         "publisher_namespace": "EnginesSystem",
-        "type_path": "database/sql/mysql",
+        "type_path": "filesystem/local/filesystem",
         "variables": {
-          "database_name": "_Engines_Builder(engine_name)",
-          "database_host": "_Engines_System(mysql_host)",
-          "db_username": "_Engines_Builder(engine_name)",
-          "db_password": "_Engines_System(random(10))",
-          "collation": "utf8_general_ci",
-          "full_access": "false"
+          "service_name": "var",
+          "volume_src": "",
+          "engine_path": "/home/fs/var",
+          "permissions": "rw",
+          "user": "_Engines_Builder(data_uid)",
+          "group": "_Engines_Builder(data_gid)"
         }
       },
       {
         "publisher_namespace": "EnginesSystem",
         "type_path": "filesystem/local/filesystem",
         "variables": {
-          "service_name": "var",
+          "service_name": "etc",
           "volume_src": "",
-          "engine_path": "/home/fs/var",
+          "engine_path": "/home/fs/etc",
           "permissions": "rw",
           "user": "_Engines_Builder(data_uid)",
           "group": "_Engines_Builder(data_gid)"
@@ -123,6 +123,10 @@
       {
         "path": "/home/app/var",
         "volume_name": "var"
+      },
+      {
+        "path": "/home/app/etc",
+        "volume_name": "etc"
       }
     ],
     "actionators": [
