@@ -15,12 +15,27 @@
         "level": "alpha",
         "patch": 0
       }
-    }
+    },
+    "timestamp": "2018-11-22T13:55:10+11:00"
   },
   "software": {
     "base": {
+      "name": "nagios",
+      "framework": "apache_php",
       "deployment_type": "web",
-      "http_protocol": "https_and_http"
-    }
+      "http_protocol": "https_only",
+      "memory": {
+        "required": 96,
+        "recommended": 128
+      }
+    },
+    "system_packages": [
+      {
+        "package": "nagios3"
+      },
+      {
+        "package": "nagios-plugins-basic"
+      }
+    ]
   }
 }
