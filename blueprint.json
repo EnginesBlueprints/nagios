@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-22T16:24:17+11:00"
+    "timestamp": "2018-11-22T18:08:25+11:00"
   },
   "software": {
     "base": {
@@ -36,15 +36,16 @@
       },
       "install": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\ncp -r /etc/nagios3 /home/app\r\ncp -r /etc/nagios-plugins /home/app\r\nmkdir -p /home/fs/var/lib/nagios3\r\nmkdir -p /home/fs/var/log/nagios3\r\nmkdir -p /home/fs/var/cache/nagios3\r\nmkdir -p /home/fs/var/lib/nagios3/spool/checkresults\r\n\r\n"
+        "content": "#!/bin/sh\r\n\r\ncp -r /etc/nagios /home/app\r\ncp -r /etc/nagios-plugins /home/app\r\nmkdir -p /home/fs/var/lib/nagios\r\nmkdir -p /home/fs/var/log/nagios\r\nmkdir -p /home/fs/var/cache/nagios\r\nmkdir -p /home/fs/var/lib/nagios/spool/checkresults\r\n\r\n"
       }
     },
-    "system_packages": [
+    "installed_packages": [
       {
-        "package": "nagios3"
-      },
-      {
-        "package": "monitoring-plugins"
+        "name": "nagios-4.4.2.tar.gz",
+        "download_type": "http(s)",
+        "source_url": "https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.2.tar.gz",
+        "extraction_command": "tar xzpf",
+        "path_to_extracted": "nagios-4.4.2"
       }
     ],
     "required_modules": [
