@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-23T09:04:38+11:00"
+    "timestamp": "2018-11-23T09:10:29+11:00"
   },
   "software": {
     "base": {
@@ -30,10 +30,6 @@
       }
     },
     "scripts": {
-      "start": {
-        "language": "sh",
-        "content": "#!/bin/sh\r\n\r\n/usr/local/nagios/bin/nagios  /usr/local/nagios/etc/nagios.cfg &\r\necho $! > /tmp/nagios.pid\r\n\r\n"
-      },
       "install": {
         "language": "sh",
         "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\nln -s /home/app/etc /usr/local/nagios/etc\r\nmake install-config\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagios_admin $nagios_admin_password\r\n\r\nln -s /home/app/var /usr/local/nagios/var\r\nmkdir /usr/local/nagios/var/rw/\r\n\r\nrm -r /home/app/src"
@@ -129,6 +125,9 @@
         "volume_name": "etc"
       }
     ],
+    "workers": {
+      "blocking": "/usr/local/nagios/bin/nagios  /usr/local/nagios/etc/nagios.cfg "
+    },
     "actionators": [
       {
         "name": "change_na_password",
