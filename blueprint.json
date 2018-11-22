@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-22T14:52:41+11:00"
+    "timestamp": "2018-11-22T16:24:17+11:00"
   },
   "software": {
     "base": {
@@ -32,16 +32,19 @@
     "scripts": {
       "start": {
         "language": "sh",
-        "content": "#!/bin/sh\r\nsleep 3600"
+        "content": "#!/bin/sh\r\nnagios -f /home/app/nagios3/nagios.cfg &\r\nsleep 3600\r\n"
+      },
+      "install": {
+        "language": "sh",
+        "content": "#!/bin/sh\r\n\r\ncp -r /etc/nagios3 /home/app\r\ncp -r /etc/nagios-plugins /home/app\r\nmkdir -p /home/fs/var/lib/nagios3\r\nmkdir -p /home/fs/var/log/nagios3\r\nmkdir -p /home/fs/var/cache/nagios3\r\nmkdir -p /home/fs/var/lib/nagios3/spool/checkresults\r\n\r\n"
       }
     },
-    "installed_packages": [
+    "system_packages": [
       {
-        "name": "xi-latest.tar.gz",
-        "download_type": "http(s)",
-        "source_url": "https://assets.nagios.com/downloads/nagiosxi/xi-latest.tar.gz",
-        "extraction_command": "tar -xzpf ",
-        "path_to_extracted": "nagiosxi"
+        "package": "nagios3"
+      },
+      {
+        "package": "monitoring-plugins"
       }
     ],
     "required_modules": [
@@ -66,6 +69,18 @@
           "collation": "utf8_general_ci",
           "full_access": "false"
         }
+      },
+      {
+        "publisher_namespace": "EnginesSystem",
+        "type_path": "filesystem/local/filesystem",
+        "variables": {
+          "service_name": "var",
+          "volume_src": "",
+          "engine_path": "/home/fs/var",
+          "permissions": "rw",
+          "user": "_Engines_Builder(data_uid)",
+          "group": "_Engines_Builder(data_gid)"
+        }
       }
     ],
     "template_files": [
@@ -73,12 +88,22 @@
         "path": "/usr/local/nagiosxi/basedir/var/xi-sys.cfg",
         "language": "text",
         "content": "apachegroup='www-data'\r\napacheuser='www-data'\r\nchownbin='/bin/chown'\r\ngroupaddbin='/usr/sbin/groupadd'\r\ngroupdelbin='/usr/sbin/groupdel'\r\nhtpasswdbin='/usr/bin/htpasswd'\r\nhttpdconfdir='/etc/httpd/conf.d'\r\nhttpdconf='/etc/httpd/conf/httpd.conf'\r\nhttpdroot='/home/app'\r\nhttpd='httpd'\r\nntpd='ntpd'\r\ncrond='crond'\r\nmkdirbin='/bin/mkdir'\r\nmrtgcfg='/etc/mrtg/mrtg.cfg'\r\n#mysqld='mysqld'\r\n#mysqlpass='nagiosxi'\r\n#pgsqlrootpass='postgres'\r\n#pgsqlpass='nagiosxi'\r\nnagioscmdgroup='nagcmd'\r\nnagiosgroup='www-data'\r\nnagiosuser='www-data'\r\nnagioswebpwd='_Engines_Environment(nagiosadmin_password)'\r\nnagioswebuser='nagiosadmin'\r\nphpconfd='/etc/php.d'\r\nphpini='/etc/php.ini'\r\nproddir='/usr/local/nagiosxi'\r\nuseraddbin='/usr/sbin/useradd'\r\nusermodbin='/usr/sbin/usermod'\r\nuserdelbin='/usr/sbin/userdel'\r\nmibsdir='/usr/share/snmp/mibs'\r\nphpconfdcli='/etc/php.d'\r\nxiver='5.5.0'\r\ndistro='CentOS'\r\nversion='6.9'\r\nver='6'\r\narchitecture='x86_64'\r\ndist='el6'\r\narch='x86_64'\r\nphp_extension_dir='/usr/lib64/php/modules'\r\ncfg__base_url='/nagiosxi'\r\ncfg__root_dir='/usr/local/nagiosxi'\r\ncfg__script_dir='/usr/local/nagiosxi/scripts'\r\ncfg__xidpe_dir='/usr/local/nagios/var/spool/xidpe/'\r\ncfg__perfdata_spool='/usr/local/nagios/var/spool/perfdata/'\r\ncfg__nom_checkpoints_dir='/usr/local/nagiosxi/nom/checkpoints/nagioscore/'\r\ncfg__use_https=0\r\ncfg__port_number=0\r\ncfg__dbtype=''\r\ncfg__dbserver='_Engines_Environment(dbhost)'\r\ncfg__db_conn_persistent=1\r\ncfg__db_info__nagiosxi__dbtype='mysql'\r\ncfg__db_info__nagiosxi__dbserver='_Engines_Environment(dbhost)'\r\ncfg__db_info__nagiosxi__user='_Engines_Environment(dbuser)'\r\ncfg__db_info__nagiosxi__pwd='_Engines_Environment(dbpasswd)'\r\ncfg__db_info__nagiosxi__db='_Engines_Environment(dbname)'\r\ncfg__db_info__nagiosxi__dbmaint__max_auditlog_age=180\r\ncfg__db_info__nagiosxi__dbmaint__max_commands_age=480\r\ncfg__db_info__nagiosxi__dbmaint__max_events_age=480\r\ncfg__db_info__nagiosxi__dbmaint__optimize_interval=60\r\ncfg__db_info__nagiosxi__dbmaint__repair_interval=0\r\ncfg__db_info__ndoutils__dbtype='mysql'\r\ncfg__db_info__ndoutils__dbserver='_Engines_Environment(dbhost)'\r\ncfg__db_info__ndoutils__user='_Engines_Environment(dbuser)'\r\ncfg__db_info__ndoutils__pwd='_Engines_Environment(dbpasswd)'\r\ncfg__db_info__ndoutils__db='_Engines_Environment(dbname)'\r\ncfg__db_info__ndoutils__dbmaint__max_externalcommands_age=7\r\ncfg__db_info__ndoutils__dbmaint__max_logentries_age=90\r\ncfg__db_info__ndoutils__dbmaint__max_statehistory_age=730\r\ncfg__db_info__ndoutils__dbmaint__max_notifications_age=90\r\ncfg__db_info__ndoutils__dbmaint__max_timedevents_age=5\r\ncfg__db_info__ndoutils__dbmaint__max_systemcommands_age=5\r\ncfg__db_info__ndoutils__dbmaint__max_servicechecks_age=5\r\ncfg__db_info__ndoutils__dbmaint__max_hostchecks_age=5\r\ncfg__db_info__ndoutils__dbmaint__max_eventhandlers_age=5\r\ncfg__db_info__ndoutils__dbmaint__optimize_interval=60\r\ncfg__db_info__ndoutils__dbmaint__repair_interval=0\r\ncfg__db_info__nagiosql__dbtype='mysql'\r\ncfg__db_info__nagiosql__dbserver='_Engines_Environment(dbhost)'\r\ncfg__db_info__nagiosql__user='_Engines_Environment(dbuser)'\r\ncfg__db_info__nagiosql__pwd='_Engines_Environment(dbpasswd)'\r\ncfg__db_info__nagiosql__db='_Engines_Environment(dbname)'\r\ncfg__db_info__nagiosql__dbmaint__max_logbook_age=480\r\ncfg__db_info__nagiosql__dbmaint__optimize_interval=60\r\ncfg__db_info__nagiosql__dbmaint__repair_interval=0\r\ncfg__db_prefix__ndoutils='nagios_'\r\ncfg__db_prefix__nagiosxi='xi_'\r\ncfg__db_prefix__nagiosql='tbl_'\r\ncfg__component_info__nagioscore__cgi_dir='/usr/local/nagios/sbin'\r\ncfg__component_info__nagioscore__import_dir='/usr/local/nagios/etc/import'\r\ncfg__component_info__nagioscore__plugin_dir='/usr/local/nagios/libexec'\r\ncfg__component_info__nagioscore__cgi_config_file='/usr/local/nagios/etc/cgi.cfg'\r\ncfg__component_info__nagioscore__cmd_file='/usr/local/nagios/var/rw/nagios.cmd'\r\ncfg__component_info__nagioscore__log_file='/usr/local/nagios/var/nagios.log'\r\ncfg__component_info__nagioscore__nom_checkpoint_interval=1440\r\ncfg__component_info__pnp__perfdata_dir='/usr/local/nagios/share/perfdata'\r\ncfg__component_info__pnp__share_dir='/usr/local/nagios/share/pnp'\r\ncfg__component_info__pnp__direct_url='/nagios/pnp'\r\ncfg__component_info__pnp__username='nagiosxi'\r\ncfg__component_info__pnp__password='nagiosadmin'\r\ncfg__component_info__perfdata__rrdtool_path='/usr/bin/rrdtool'\r\ncfg__component_info__nagvis__share_dir='/usr/local/nagios/share/nagvis'\r\ncfg__component_info__nagvis__direct_url='/nagios/nagvis'\r\ncfg__component_info__nagvis__username='nagiosadmin'\r\ncfg__component_info__nagvis__password='nagiosadmin'\r\ncfg__demo_mode=0\r\ncfg__dashlet_refresh_multiplier=1000\r\ncfg__dashlet_refresh_rates__available_updates=86400\r\ncfg__dashlet_refresh_rates__systat_eventqueuechart=5\r\ncfg__dashlet_refresh_rates__sysstat_monitoringstats=30\r\ncfg__dashlet_refresh_rates__systat_monitoringperf=30\r\ncfg__dashlet_refresh_rates__sysstat_monitoringproc=30\r\ncfg__dashlet_refresh_rates__perfdata_chart=60\r\ncfg__dashlet_refresh_rates__network_outages=30\r\ncfg__dashlet_refresh_rates__host_status_summary=60\r\ncfg__dashlet_refresh_rates__service_status_summary=60\r\ncfg__dashlet_refresh_rates__hostgroup_status_overview=60\r\ncfg__dashlet_refresh_rates__hostgroup_status_grid=60\r\ncfg__dashlet_refresh_rates__servicegroup_status_overview=60\r\ncfg__dashlet_refresh_rates__servicegroup_status_grid=60\r\ncfg__dashlet_refresh_rates__hostgroup_status_summary=60\r\ncfg__dashlet_refresh_rates__servicegroup_status_summary=60\r\ncfg__dashlet_refresh_rates__sysstat_componentstates=7\r\ncfg__dashlet_refresh_rates__sysstat_serverstats=5\r\ncfg__dashlet_refresh_rates__network_outages_summary=30\r\ncfg__dashlet_refresh_rates__network_health=30\r\ncfg__dashlet_refresh_rates__host_status_tac_summary=30\r\ncfg__dashlet_refresh_rates__service_status_tac_summary=30\r\ncfg__dashlet_refresh_rates__feature_status_tac_summary=30\r\ncfg__dashlet_refresh_rates__admin_tasks=60\r\ncfg__dashlet_refresh_rates__getting_started=60\r\ncfg__dashlet_refresh_rates__pagetop_alert_content=30\r\ncfg__dashlet_refresh_rates__tray_alert=30\r\ncfg__memcached_enable=0\r\ncfg__memcached_hosts__0='127.0.0.1'\r\ncfg__memcached_port=11211\r\ncfg__memcached_compress=0\r\ncfg__memcached_ttl=10\r\ncfg__use_basic_authentication=0\r\ncfg__subsystem_basic_auth_username='nagiosxi'\r\ncfg__subsystem_basic_auth_password='_Engines_Environment(nagiosxi_password)'\r\ncfg__default_language='en_US'\r\ncfg__default_theme=''\r\ncfg__languages__en_US='English'\r\ncfg__default_instance_id=1\r\ncfg__default_result_records=100000\r\ncfg__online_help_url='https://support.nagios.com/'\r\ncfg__feedback_url='https://api.nagios.com/feedback/'\r\ncfg__privacy_policy_url='https://www.nagios.com/legal/privacypolicy/'\r\ncfg__db_version=113\r\ncfg__subsystem_ticket='12345'\r\ncfg__htaccess_file='/usr/local/nagiosxi/etc/htpasswd.users'\r\ncfg__htpasswd_path='/usr/bin/htpasswd'\r\nmake_j_flag='4'\r\n\r\n"
+      },
+      {
+        "path": "/home/app/nagios3/nagios.cfg",
+        "language": "text"
       }
     ],
     "file_write_permissions": [
       {
         "path": "/home/app",
         "recursive": true
+      }
+    ],
+    "persistent_directories": [
+      {
+        "path": "/home/app/var",
+        "volume_name": "var"
       }
     ]
   }
