@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-23T08:51:21+11:00"
+    "timestamp": "2018-11-23T08:53:55+11:00"
   },
   "software": {
     "base": {
@@ -93,6 +93,7 @@
     "environment_variables": [
       {
         "name": "nagios_admin_password",
+        "ask_at_build_time": true,
         "build_time_only": true,
         "input": {
           "type": "password_with_confirmation",
