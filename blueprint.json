@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-23T19:47:41+11:00"
+    "timestamp": "2018-11-24T10:47:32+11:00"
   },
   "software": {
     "base": {
@@ -36,7 +36,7 @@
       },
       "first_run": {
         "language": "sh",
-        "content": "#!/bin/bash\r\nconfig_dirs=hosts,host_groups,services,service_groups,contacts,contact_groups,timeperiods,commands\r\n\r\ncp -r /usr/local/nagios/etc /home/fs/\r\nrm -r /usr/local/nagios/etc\r\nln -s /home/fs/etc /usr/local/nagios/\r\n\r\nnagios_admin_password=`cat /home/app/password`\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagios_admin $nagios_admin_password\r\nrm /home/app/password\r\ncp -r /usr/local/nagios/var /home/fs/\r\nrm -r /usr/local/nagios/var\r\nln -s /home/fs/var /usr/local/nagios/\r\nmkdir /home/fs/var/rw/\r\n\r\n#sudo -u data-user cp src/sample-config/*.cfg /home/fs/etc/\r\n#sudo -u data-user mkdir /home/fs/etc/objects\r\n#sudo -u data-user cp src/sample-config/template-object/*.cfg  /home/fs/etc/objects\r\nsudo -u data-user mkdir /home/fs/etc/{$config_dirs}\r\nsudo -u data-user cp -r /home/fs_src/etc/* /home/fs/etc"
+        "content": "#!/bin/sh\r\nconfig_dirs=\"hosts host_groups services service_groups contacts contact_groups timeperiods commands\"\r\n\r\ncp -r /usr/local/nagios/etc /home/fs/\r\nrm -r /usr/local/nagios/etc\r\nln -s /home/fs/etc /usr/local/nagios/\r\n\r\nnagios_admin_password=`cat /home/app/password`\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagiosadmin $nagios_admin_password\r\nrm /home/app/password\r\ncp -r /usr/local/nagios/var /home/fs/\r\nrm -r /usr/local/nagios/var\r\nln -s /home/fs/var /usr/local/nagios/\r\nmkdir /home/fs/var/rw/\r\n\r\n#sudo -u data-user cp src/sample-config/*.cfg /home/fs/etc/\r\n#sudo -u data-user mkdir /home/fs/etc/objects\r\n#sudo -u data-user cp src/sample-config/template-object/*.cfg  /home/fs/etc/objects\r\n for config_dir in $config_dirs\r\n  do\r\n    sudo -u data-user mkdir /home/fs/etc/$config_dir\r\n done\r\nsudo -u data-user cp -r /home/fs_src/etc/* /home/fs/etc"
       }
     },
     "system_packages": [
@@ -175,7 +175,7 @@
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/sh\r\nhtpasswd  -b /usr/local/nagios/etc/htpasswd.users nagios_admin $password"
+          "content": "#!/bin/sh\r\nhtpasswd  -b /usr/local/nagios/etc/htpasswd.users nagiosadmin $password"
         }
       },
       {
@@ -293,9 +293,26 @@
       {
         "name": "view_host",
         "return_type": "plain_text",
+        "variables": [
+          {
+            "name": "hostname",
+            "mandatory": true,
+            "input": {
+              "type": "string"
+            }
+          }
+        ],
         "script": {
           "language": "sh",
           "content": "#!/bin/bash\r\n\r\ncat /home/fs/etc/hosts/$hostname.cfg"
+        }
+      },
+      {
+        "name": "list_hosts",
+        "return_type": "json",
+        "script": {
+          "language": "sh",
+          "content": "#!/bin.sh\r\ncd /home/fs/etc/hosts\r\necho '{\"hosts\":['\r\nc=0\r\nfor host in `ls *cfg | sed \"s/\\.cfg//\"`\r\n do\r\n if test c -ne 0\r\n  then\r\n  else\r\n   echo ,\r\n   c=1\r\n fi \r\n echo '\"'$host'\"'\r\ndone\r\necho ']}'"
         }
       }
     ],
