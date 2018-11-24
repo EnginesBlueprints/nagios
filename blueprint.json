@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-24T12:16:07+11:00"
+    "timestamp": "2018-11-24T12:20:27+11:00"
   },
   "software": {
     "base": {
@@ -387,6 +387,32 @@
         "script": {
           "language": "sh",
           "content": "!/bin/sh\r\n\r\nif test -z $hostname\r\n then\r\n  echo \"Hostname cant be null\"\r\n  exit\r\nfi\r\n\r\nif ! test -d /home/fs/etc/templates/hosts/$hostname\r\n then\r\n  echo no such host\r\nfi\r\n\r\nfor service in `ls /home/fs/etc/templates/hosts/$hostname/services`\r\n do\r\n  rm /home/fs/etc/services/$hostname_$service\r\n done\r\n \r\nrm -r /home/fs/etc/templates/hosts/$hostname\r\nrm /home/fs/etc/hosts/$hostname.cfg"
+        }
+      },
+      {
+        "name": "export_config",
+        "return_type": "file",
+        "return_file_name": "nagios_config",
+        "script": {
+          "language": "sh",
+          "content": "!#/bin/bash\r\ncd /home/fs/etc\r\ntar -cpf - .\r\n"
+        }
+      },
+      {
+        "name": "import_config",
+        "return_type": "plain_text",
+        "variables": [
+          {
+            "name": "config_tar",
+            "mandatory": true,
+            "input": {
+              "type": "file"
+            }
+          }
+        ],
+        "script": {
+          "language": "sh",
+          "content": "#!/bin/sh\r\ncd /home/fs/etc\r\ntar -xpf -"
         }
       }
     ],
