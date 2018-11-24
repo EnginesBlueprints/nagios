@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-24T13:02:01+11:00"
+    "timestamp": "2018-11-24T14:12:16+11:00"
   },
   "software": {
     "base": {
@@ -266,11 +266,17 @@
                 }
               }
             }
+          },
+          {
+            "name": "hostgroup_name",
+            "input": {
+              "type": "string"
+            }
           }
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/sh\r\n\r\nmkdir -p /home/fs/etc/templates/hosts/$hostname\r\ncd /home/fs/etc/templates/hosts/$hostname\r\necho -n $hostname > hostname\r\necho -n $max_check_attempts > max_check_attempts\r\necho -n $check_period > check_period\r\necho -n $contacts > contacts\r\necho -n $address > address\r\necho -n $contact_groups > contact_groups\r\necho -n $notification_interval  > notification_interval\r\necho -n $notification_period > notification_period \r\necho -n $config_fragment > config_fragment\r\n\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    max_check_attempts $max_check_attempts\r\n    check_period\t$check_period\r\n    contacts\t$contacts\r\n    contact_groups\t$contact_groups\r\n\tnotification_interval $notification_interval\r\n\tnotification_period $notification_period\r\n\t$config_fragment\r\n\t\" >/home/fs/etc/hosts/$hostname.cfg\r\n\t\r\n\tif ! test -z $address \r\n\t then \r\n\t  echo address $address >> /home/fs/etc/hosts/$hostname.cfg\r\n\tfi\r\n\t\r\n\techo \"}\" >> /home/fs/etc/hosts/$hostname.cfg\r\n"
+          "content": "#!/bin/sh\r\n\r\nmkdir -p /home/fs/etc/templates/hosts/$hostname\r\ncd /home/fs/etc/templates/hosts/$hostname\r\necho -n $hostname > hostname\r\necho -n $max_check_attempts > max_check_attempts\r\necho -n $check_period > check_period\r\necho -n $contacts > contacts\r\necho -n $address > address\r\necho -n $contact_groups > contact_groups\r\necho -n $notification_interval  > notification_interval\r\necho -n $notification_period > notification_period \r\necho -n $config_fragment > config_fragment\r\n\r\necho \" $hostgroup_name\" >> hostgroup_name\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    max_check_attempts $max_check_attempts\r\n    check_period\t$check_period\r\n    contacts\t$contacts\r\n    contact_groups\t$contact_groups\r\n\tnotification_interval $notification_interval\r\n\tnotification_period $notification_period\r\n\t$config_fragment\r\n\t\" >/home/fs/etc/hosts/$hostname.cfg\r\n\t\r\n\tif ! test -z $address \r\n\t then \r\n\t  echo address $address >> /home/fs/etc/hosts/$hostname.cfg\r\n\tfi\r\n\tif ! test -z $hostgroup_name\r\n\t then \r\n\t  echo hostgroup_name $hostgroup_name >> /home/fs/etc/hosts/$hostname.cfg\r\n\tfi\t\r\n\techo \"}\" >> /home/fs/etc/hosts/$hostname.cfg\r\n"
         }
       },
       {
@@ -437,6 +443,67 @@
           "language": "sh",
           "content": "#!/bin/sh\r\ncd /home/fs/etc\r\ntar -xpf -"
         }
+      },
+      {
+        "name": "add_host_group",
+        "return_type": "none",
+        "variables": [
+          {
+            "name": "hostgroup_name",
+            "mandatory": true,
+            "input": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "alias",
+            "mandatory": true,
+            "input": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hostgroup_members",
+            "input": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "notes",
+            "input": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "notes_url",
+            "input": {
+              "type": "url"
+            }
+          },
+          {
+            "name": "action_url",
+            "input": {
+              "type": "url"
+            }
+          }
+        ],
+        "script": {
+          "language": "sh",
+          "content": "#!/bin/sh\r\n\r\nif test $? -eq 1\r\n then\r\n hostgroup_name=$1\r\n  $alias=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/alias`\r\n  $notes=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/notes`\r\n  $action_url=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/action_url`\r\n  $notes_url=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/notes_url`\r\nelse\r\n mkdir /home/fs/etc/templates/hostgroups/$hostgroup_name\r\n echo $hostgroup_name > /home/fs/etc/templates/hostgroups/$hostgroup_name/hostgroup_name\r\n echo $alias > /home/fs/etc/templates/hostgroups/$hostgroup_name/alias\r\n echo $notes > /home/fs/etc/templates/hostgroups/$hostgroup_name/notes\r\n echo $action_url > /home/fs/etc/templates/hostgroups/$hostgroup_name/action_url\r\n echo $notes_url > /home/fs/etc/templates/hostgroups/$hostgroup_name/notes_url\r\nfi\r\n\r\nhostdirs=`grep $hostgroup_name /home/fs/etc/templates/hosts/*/hostgroup_name`\r\nfor hostdir in $hostdirs\r\n do\r\n  hosts=$hosts `echo $hostdir |cut -f6 -d/`\r\ndone\r\n\r\necho \"define hostgroup {\r\n    hostgroup_name  $hostgroup_name\r\n    alias           $alias\r\n \" > /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n \r\n hosts_str=`echo $hosts | sed \"s/ //g\"`\r\n if ! test -z $hosts_str\r\n  then\r\n   echo members $hosts >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi\r\n \r\n if ! test -z $notes\r\n  then\r\n   echo  notes $notes >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi\r\n  if ! test -z $action_url\r\n  then\r\n   echo  action_url $action_url >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi  \r\n  if ! test -z $notes_url\r\n  then\r\n   echo  notes_url $notes_url >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi\r\n echo \"}\" >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n"
+        }
+      },
+      {
+        "name": "rm_host_group",
+        "return_type": "plain_text",
+        "variables": [
+          {
+            "name": "hostgroup_name",
+            "mandatory": true,
+            "input": {
+              "type": "string"
+            }
+          }
+        ]
       }
     ],
     "framework_specific": {
