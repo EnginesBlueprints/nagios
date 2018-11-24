@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-24T10:47:32+11:00"
+    "timestamp": "2018-11-24T11:02:04+11:00"
   },
   "software": {
     "base": {
@@ -32,11 +32,11 @@
     "scripts": {
       "install": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\nmake install-config\r\n\r\necho $nagios_admin_password >/home/app/password\r\n\r\n"
+        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\nmake install-config\r\n\r\necho $nagios_admin_password >/home/app/password\r\n\r\nwget https://nagios-plugins.org/download/nagios-plugins-2.2.1.tar.gz\r\ntar -xzf nagios-plugins*.tar.gz\r\ncd nagios-plugin-2.2.1/\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-openssl\r\nmake\r\nmake install\r\n\r\n\r\n"
       },
       "first_run": {
         "language": "sh",
-        "content": "#!/bin/sh\r\nconfig_dirs=\"hosts host_groups services service_groups contacts contact_groups timeperiods commands\"\r\n\r\ncp -r /usr/local/nagios/etc /home/fs/\r\nrm -r /usr/local/nagios/etc\r\nln -s /home/fs/etc /usr/local/nagios/\r\n\r\nnagios_admin_password=`cat /home/app/password`\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagiosadmin $nagios_admin_password\r\nrm /home/app/password\r\ncp -r /usr/local/nagios/var /home/fs/\r\nrm -r /usr/local/nagios/var\r\nln -s /home/fs/var /usr/local/nagios/\r\nmkdir /home/fs/var/rw/\r\n\r\n#sudo -u data-user cp src/sample-config/*.cfg /home/fs/etc/\r\n#sudo -u data-user mkdir /home/fs/etc/objects\r\n#sudo -u data-user cp src/sample-config/template-object/*.cfg  /home/fs/etc/objects\r\n for config_dir in $config_dirs\r\n  do\r\n    sudo -u data-user mkdir /home/fs/etc/$config_dir\r\n done\r\nsudo -u data-user cp -r /home/fs_src/etc/* /home/fs/etc"
+        "content": "#!/bin/sh\r\nconfig_dirs=\"hosts host_groups services service_groups contacts contact_groups timeperiods commands\"\r\n\r\ncp -r /usr/local/nagios/etc /home/fs/\r\nrm -r /usr/local/nagios/etc\r\nln -s /home/fs/etc /usr/local/nagios/\r\n\r\nnagios_admin_password=`cat /home/app/password`\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagiosadmin $nagios_admin_password\r\nrm /home/app/password\r\ncp -r /usr/local/nagios/var /home/fs/\r\nrm -r /usr/local/nagios/var\r\nln -s /home/fs/var /usr/local/nagios/\r\nmkdir /home/fs/var/rw/\r\n\r\n#sudo -u data-user cp src/sample-config/*.cfg /home/fs/etc/\r\n#sudo -u data-user mkdir /home/fs/etc/objects\r\n#sudo -u data-user cp src/sample-config/template-object/*.cfg  /home/fs/etc/objects\r\n for config_dir in $config_dirs\r\n  do\r\n   mkdir /home/fs/etc/$config_dir\r\n done\r\nsudo -u data-user cp -r /home/fs_src/etc/* /home/fs/etc"
       }
     },
     "system_packages": [
@@ -98,8 +98,8 @@
         "build_time_only": true,
         "input": {
           "type": "password_with_confirmation",
-          "label": "nagios_admin password",
-          "comment": "password nagios_admin user"
+          "label": "nagiosadmin password",
+          "comment": "password nagiosadmin user password"
         }
       },
       {
