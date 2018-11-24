@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-24T11:59:58+11:00"
+    "timestamp": "2018-11-24T12:05:56+11:00"
   },
   "software": {
     "base": {
@@ -36,7 +36,7 @@
       },
       "first_run": {
         "language": "sh",
-        "content": "#!/bin/sh\r\nconfig_dirs=\"hosts host_groups services service_groups contacts contact_groups timeperiods commands\"\r\n\r\ncp -r /usr/local/nagios/etc /home/fs/\r\nrm -r /usr/local/nagios/etc\r\nln -s /home/fs/etc /usr/local/nagios/\r\n\r\nnagios_admin_password=`cat /home/app/password`\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagiosadmin $nagios_admin_password\r\nrm /home/app/password\r\ncp -r /usr/local/nagios/var /home/fs/\r\nrm -r /usr/local/nagios/var\r\nln -s /home/fs/var /usr/local/nagios/\r\nmkdir /home/fs/var/rw/\r\n\r\n#sudo -u data-user cp src/sample-config/*.cfg /home/fs/etc/\r\n#sudo -u data-user mkdir /home/fs/etc/objects\r\n#sudo -u data-user cp src/sample-config/template-object/*.cfg  /home/fs/etc/objects\r\n for config_dir in $config_dirs\r\n  do\r\n   mkdir /home/fs/etc/$config_dir\r\n done\r\nsudo -u data-user cp -r /home/fs_src/etc/* /home/fs/etc"
+        "content": "#!/bin/sh\r\nconfig_dirs=\"hosts host_groups services service_groups contacts contact_groups timeperiods commands\"\r\n\r\ncp -r /usr/local/nagios/etc /home/fs/\r\nrm -r /usr/local/nagios/etc\r\nln -s /home/fs/etc /usr/local/nagios/\r\n\r\nnagios_admin_password=`cat /home/app/password`\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagiosadmin $nagios_admin_password\r\nrm /home/app/password\r\ncp -r /usr/local/nagios/var /home/fs/\r\nrm -r /usr/local/nagios/var\r\nln -s /home/fs/var /usr/local/nagios/\r\nmkdir /home/fs/var/rw/\r\n\r\n#sudo -u data-user cp src/sample-config/*.cfg /home/fs/etc/\r\n#sudo -u data-user mkdir /home/fs/etc/objects\r\n#sudo -u data-user cp src/sample-config/template-object/*.cfg  /home/fs/etc/objects\r\n for config_dir in $config_dirs\r\n  do\r\n   mkdir /home/fs/etc/$config_dir\r\n done\r\nsudo -u data-user cp -r /home/engines/templates/fs_src/etc/* /home/fs/etc"
       }
     },
     "system_packages": [
@@ -105,6 +105,7 @@
       {
         "name": "admin_email",
         "mandatory": true,
+        "ask_at_build_time": true,
         "input": {
           "type": "email"
         }
