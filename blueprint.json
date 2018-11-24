@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-24T11:02:04+11:00"
+    "timestamp": "2018-11-24T11:59:58+11:00"
   },
   "software": {
     "base": {
@@ -190,6 +190,13 @@
             }
           },
           {
+            "name": "address",
+            "input": {
+              "type": "string",
+              "label": "ip address"
+            }
+          },
+          {
             "name": "max_check_attempts",
             "value": "-1",
             "mandatory": true,
@@ -262,7 +269,7 @@
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/sh\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    max_check_attempts $max_check_attempts\r\n    check_period\t$check_period\r\n    contacts\t$contacts\r\n    contact_groups\t$contact_groups\r\n\tnotification_interval $notification_interval\r\n\tnotification_period $notification_period\r\n\t$config_fragment\r\n\t}\" >/home/fs/etc/hosts/$hostname.cfg\r\n"
+          "content": "#!/bin/sh\r\n\r\nmkdir -p /home/fs/etc/templates/hosts/$hostname\r\ncd /home/fs/etc/templates/hosts/$hostname\r\necho -n $hostname > hostname\r\necho -n $max_check_attempts > max_check_attempts\r\necho -n $check_period > check_period\r\necho -n $contacts > contacts\r\necho -n $address > address\r\necho -n $contact_groups > contact_groups\r\necho -n $notification_interval  > notification_interval\r\necho -n $notification_period > notification_period \r\necho -n $config_fragment > config_fragment\r\n\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    address $address\r\n    max_check_attempts $max_check_attempts\r\n    check_period\t$check_period\r\n    contacts\t$contacts\r\n    contact_groups\t$contact_groups\r\n\tnotification_interval $notification_interval\r\n\tnotification_period $notification_period\r\n\t$config_fragment\r\n\t}\" >/home/fs/etc/hosts/$hostname.cfg\r\n"
         }
       },
       {
@@ -313,6 +320,55 @@
         "script": {
           "language": "sh",
           "content": "#!/bin.sh\r\ncd /home/fs/etc/hosts\r\necho '{\"hosts\":['\r\nc=0\r\nfor host in `ls *cfg | sed \"s/\\.cfg//\"`\r\n do\r\n if test c -ne 0\r\n  then\r\n  else\r\n   echo ,\r\n   c=1\r\n fi \r\n echo '\"'$host'\"'\r\ndone\r\necho ']}'"
+        }
+      },
+      {
+        "name": "add_service",
+        "return_type": "plain_text",
+        "variables": [
+          {
+            "name": "hostname",
+            "mandatory": true,
+            "input": {
+              "type": "string",
+              "label": "Hostname"
+            }
+          },
+          {
+            "name": "service_description",
+            "mandatory": true,
+            "input": {
+              "type": "string",
+              "label": "Service Description"
+            }
+          },
+          {
+            "name": "check_command",
+            "mandatory": true,
+            "input": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "use",
+            "value": "local-service",
+            "mandatory": true,
+            "input": {
+              "type": "string"
+            }
+          }
+        ],
+        "script": {
+          "language": "sh",
+          "content": "#!/bin/sh\r\n\r\nservicename=`echo $service_description | sed \"s/ /_/g\"`\r\nmkdir -p  /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\ncd /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\necho -n $hostname > hostname\r\necho -n $use > use\r\necho -n $service_description > service_description\r\necho -n $check_command > check_command\r\necho -n $config_fragment > config_fragment\r\n\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    use $use \r\n    service_description $service_description\r\n    check_command $check_command\r\n\t$config_fragment\r\n\t}\" >/home/fs/etc/services/$hostname_$servicename.cfg\r\n"
+        }
+      },
+      {
+        "name": "list_services",
+        "return_type": "json",
+        "script": {
+          "language": "sh",
+          "content": "#!/bin/sh\r\n\r\necho '{\"services\":['\r\n\r\ncd /home/fs/etc/templates/hosts/\r\nhosts=`ls`\r\nic=0\r\noc=0\r\nfor host in $hosts\r\n do\r\n  if test $oc -ne 0\r\n   then\r\n    echo -n ,\r\n      else\r\n       oc=1\r\n     fi  \r\n  echo '{\"host\":\"'$host'\",\"services\":['\r\n   for service in `ls $host/services`\r\n    do\r\n     if test $ic -ne 0\r\n      then\r\n       echo -n ,\r\n      else\r\n       ic=1\r\n     fi  \r\n     cat '\"'$host/services/$servicename'\"'\r\n    done \r\n    echo ']'\r\n  done\r\n  echo '}'"
         }
       }
     ],
