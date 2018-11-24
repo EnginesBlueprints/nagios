@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-24T14:12:16+11:00"
+    "timestamp": "2018-11-24T14:47:44+11:00"
   },
   "software": {
     "base": {
@@ -30,6 +30,10 @@
       }
     },
     "scripts": {
+      "start": {
+        "language": "sh",
+        "content": "#!/bin/sh\r\nhost_groups=`ls /home/fs/etc/host_groups`\r\nfor host_group in $host_groups\r\n do\r\n    /home/engines/scripts/actionators/add_host_group.sh $host_group\r\n done"
+      },
       "install": {
         "language": "sh",
         "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\nmake install-config\r\n\r\necho $nagios_admin_password >/home/app/password\r\n\r\nwget https://nagios-plugins.org/download/nagios-plugins-2.2.1.tar.gz\r\ntar -xzf nagios-plugins*.tar.gz\r\ncd nagios-plugins-2.2.1/\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-openssl\r\nmake\r\nmake install\r\n\r\n\r\n"
@@ -446,7 +450,7 @@
       },
       {
         "name": "add_host_group",
-        "return_type": "none",
+        "return_type": "plain_text",
         "variables": [
           {
             "name": "hostgroup_name",
@@ -489,7 +493,7 @@
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/sh\r\n\r\nif test $? -eq 1\r\n then\r\n hostgroup_name=$1\r\n  $alias=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/alias`\r\n  $notes=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/notes`\r\n  $action_url=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/action_url`\r\n  $notes_url=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/notes_url`\r\nelse\r\n mkdir /home/fs/etc/templates/hostgroups/$hostgroup_name\r\n echo $hostgroup_name > /home/fs/etc/templates/hostgroups/$hostgroup_name/hostgroup_name\r\n echo $alias > /home/fs/etc/templates/hostgroups/$hostgroup_name/alias\r\n echo $notes > /home/fs/etc/templates/hostgroups/$hostgroup_name/notes\r\n echo $action_url > /home/fs/etc/templates/hostgroups/$hostgroup_name/action_url\r\n echo $notes_url > /home/fs/etc/templates/hostgroups/$hostgroup_name/notes_url\r\nfi\r\n\r\nhostdirs=`grep $hostgroup_name /home/fs/etc/templates/hosts/*/hostgroup_name`\r\nfor hostdir in $hostdirs\r\n do\r\n  hosts=$hosts `echo $hostdir |cut -f6 -d/`\r\ndone\r\n\r\necho \"define hostgroup {\r\n    hostgroup_name  $hostgroup_name\r\n    alias           $alias\r\n \" > /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n \r\n hosts_str=`echo $hosts | sed \"s/ //g\"`\r\n if ! test -z $hosts_str\r\n  then\r\n   echo members $hosts >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi\r\n \r\n if ! test -z $notes\r\n  then\r\n   echo  notes $notes >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi\r\n  if ! test -z $action_url\r\n  then\r\n   echo  action_url $action_url >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi  \r\n  if ! test -z $notes_url\r\n  then\r\n   echo  notes_url $notes_url >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi\r\n echo \"}\" >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n"
+          "content": "#!/bin/sh\r\n\r\nif test $# -eq 1\r\n then\r\n hostgroup_name=$1\r\n  alias=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/alias`\r\n  notes=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/notes`\r\n  action_url=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/action_url`\r\n  notes_url=`cat /home/fs/etc/templates/hostgroups/$hostgroup_name/notes_url`\r\nelse\r\n mkdir -p /home/fs/etc/templates/hostgroups/$hostgroup_name\r\n echo $hostgroup_name > /home/fs/etc/templates/hostgroups/$hostgroup_name/hostgroup_name\r\n echo $alias > /home/fs/etc/templates/hostgroups/$hostgroup_name/alias\r\n echo $notes > /home/fs/etc/templates/hostgroups/$hostgroup_name/notes\r\n echo $action_url > /home/fs/etc/templates/hostgroups/$hostgroup_name/action_url\r\n echo $notes_url > /home/fs/etc/templates/hostgroups/$hostgroup_name/notes_url\r\nfi\r\n\r\nhostdirs=`grep -l $hostgroup_name /home/fs/etc/templates/hosts/*/hostgroup_name`\r\nfor hostdir in $hostdirs\r\n do\r\n  hosts=\"$hosts `echo $hostdir |cut -f7 -d/`\"\r\ndone\r\n\r\necho \"define hostgroup {\r\n    hostgroup_name  $hostgroup_name\r\n    alias           $alias\r\n \" > /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n \r\n hosts_str=`echo $hosts | sed \"s/ //g\"`\r\n if ! test -z $hosts_str\r\n  then\r\n   echo members $hosts >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi\r\n \r\n if ! test -z $notes\r\n  then\r\n   echo  notes $notes >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi\r\n  if ! test -z $action_url\r\n  then\r\n   echo  action_url $action_url >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi  \r\n  if ! test -z $notes_url\r\n  then\r\n   echo  notes_url $notes_url >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n fi\r\n echo \"}\" >> /home/fs/etc/hostgroups/$hostgroup_name.cfg\r\n"
         }
       },
       {
