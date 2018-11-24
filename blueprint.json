@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-24T12:05:56+11:00"
+    "timestamp": "2018-11-24T12:16:07+11:00"
   },
   "software": {
     "base": {
@@ -270,7 +270,7 @@
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/sh\r\n\r\nmkdir -p /home/fs/etc/templates/hosts/$hostname\r\ncd /home/fs/etc/templates/hosts/$hostname\r\necho -n $hostname > hostname\r\necho -n $max_check_attempts > max_check_attempts\r\necho -n $check_period > check_period\r\necho -n $contacts > contacts\r\necho -n $address > address\r\necho -n $contact_groups > contact_groups\r\necho -n $notification_interval  > notification_interval\r\necho -n $notification_period > notification_period \r\necho -n $config_fragment > config_fragment\r\n\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    address $address\r\n    max_check_attempts $max_check_attempts\r\n    check_period\t$check_period\r\n    contacts\t$contacts\r\n    contact_groups\t$contact_groups\r\n\tnotification_interval $notification_interval\r\n\tnotification_period $notification_period\r\n\t$config_fragment\r\n\t}\" >/home/fs/etc/hosts/$hostname.cfg\r\n"
+          "content": "#!/bin/sh\r\n\r\nmkdir -p /home/fs/etc/templates/hosts/$hostname\r\ncd /home/fs/etc/templates/hosts/$hostname\r\necho -n $hostname > hostname\r\necho -n $max_check_attempts > max_check_attempts\r\necho -n $check_period > check_period\r\necho -n $contacts > contacts\r\necho -n $address > address\r\necho -n $contact_groups > contact_groups\r\necho -n $notification_interval  > notification_interval\r\necho -n $notification_period > notification_period \r\necho -n $config_fragment > config_fragment\r\n\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    address $address\r\n    max_check_attempts $max_check_attempts\r\n    check_period\t$check_period\r\n    contacts\t$contacts\r\n    contact_groups\t$contact_groups\r\n\tnotification_interval $notification_interval\r\n\tnotification_period $notification_period\r\n\t$config_fragment\r\n\t\" >/home/fs/etc/hosts/$hostname.cfg\r\n\t\r\n\tif ! test -z $address \r\n\t then \r\n\t  echo address $address >> /home/fs/etc/hosts/$hostname.cfg\r\n\tfi\r\n\t\r\n\techo \"}\" >> /home/fs/etc/hosts/$hostname.cfg\r\n"
         }
       },
       {
@@ -370,6 +370,23 @@
         "script": {
           "language": "sh",
           "content": "#!/bin/sh\r\n\r\necho '{\"services\":['\r\n\r\ncd /home/fs/etc/templates/hosts/\r\nhosts=`ls`\r\nic=0\r\noc=0\r\nfor host in $hosts\r\n do\r\n  if test $oc -ne 0\r\n   then\r\n    echo -n ,\r\n      else\r\n       oc=1\r\n     fi  \r\n  echo '{\"host\":\"'$host'\",\"services\":['\r\n   for service in `ls $host/services`\r\n    do\r\n     if test $ic -ne 0\r\n      then\r\n       echo -n ,\r\n      else\r\n       ic=1\r\n     fi  \r\n     cat '\"'$host/services/$servicename'\"'\r\n    done \r\n    echo ']'\r\n  done\r\n  echo '}'"
+        }
+      },
+      {
+        "name": "rm_host",
+        "return_type": "plain_text",
+        "variables": [
+          {
+            "name": "hostname",
+            "mandatory": true,
+            "input": {
+              "type": "string"
+            }
+          }
+        ],
+        "script": {
+          "language": "sh",
+          "content": "!/bin/sh\r\n\r\nif test -z $hostname\r\n then\r\n  echo \"Hostname cant be null\"\r\n  exit\r\nfi\r\n\r\nif ! test -d /home/fs/etc/templates/hosts/$hostname\r\n then\r\n  echo no such host\r\nfi\r\n\r\nfor service in `ls /home/fs/etc/templates/hosts/$hostname/services`\r\n do\r\n  rm /home/fs/etc/services/$hostname_$service\r\n done\r\n \r\nrm -r /home/fs/etc/templates/hosts/$hostname\r\nrm /home/fs/etc/hosts/$hostname.cfg"
         }
       }
     ],
