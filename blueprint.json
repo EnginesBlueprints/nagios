@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-24T12:20:27+11:00"
+    "timestamp": "2018-11-24T12:33:19+11:00"
   },
   "software": {
     "base": {
@@ -347,6 +347,29 @@
             "name": "check_command",
             "mandatory": true,
             "input": {
+              "type": "select_with_input",
+              "collection": {
+                "items": {
+                  "check_pop": "Check Pop",
+                  "check-host-alive": "Check Host Alive",
+                  "check_ftp": "Check FTP",
+                  "check_http": "Check HTTP",
+                  "check_imap": "Check IMAP",
+                  "check_smtp": "Check STMP",
+                  "check_udp": "Check UDP",
+                  "check_tcp": "Check TCP",
+                  "check_ssh": "Check SSH",
+                  "check_snmp": "Check SNMP",
+                  "check_dhcp": "Check DHCP",
+                  "check_hpdj": "Check HP DJ",
+                  "check_nt": "Check NT"
+                }
+              }
+            }
+          },
+          {
+            "name": "check_command_args",
+            "input": {
               "type": "string"
             }
           },
@@ -361,7 +384,7 @@
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/sh\r\n\r\nservicename=`echo $service_description | sed \"s/ /_/g\"`\r\nmkdir -p  /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\ncd /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\necho -n $hostname > hostname\r\necho -n $use > use\r\necho -n $service_description > service_description\r\necho -n $check_command > check_command\r\necho -n $config_fragment > config_fragment\r\n\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    use $use \r\n    service_description $service_description\r\n    check_command $check_command\r\n\t$config_fragment\r\n\t}\" >/home/fs/etc/services/$hostname_$servicename.cfg\r\n"
+          "content": "#!/bin/sh\r\n\r\nservicename=`echo $service_description | sed \"s/ /_/g\"`\r\nmkdir -p  /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\ncd /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\necho -n $hostname > hostname\r\necho -n $use > use\r\necho -n $service_description > service_description\r\necho -n $check_command > check_command\r\necho -n $check_command_args > check_command_args\r\necho -n $config_fragment > config_fragment\r\n\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    use $use \r\n    service_description $service_description\r\n    check_command $check_command $check_command_args\r\n\t$config_fragment\r\n\t}\" >/home/fs/etc/services/$hostname_$servicename.cfg\r\n"
         }
       },
       {
