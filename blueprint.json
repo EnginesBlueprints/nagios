@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-24T12:33:19+11:00"
+    "timestamp": "2018-11-24T13:02:01+11:00"
   },
   "software": {
     "base": {
@@ -32,11 +32,11 @@
     "scripts": {
       "install": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\nmake install-config\r\n\r\necho $nagios_admin_password >/home/app/password\r\n\r\nwget https://nagios-plugins.org/download/nagios-plugins-2.2.1.tar.gz\r\ntar -xzf nagios-plugins*.tar.gz\r\ncd nagios-plugin-2.2.1/\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-openssl\r\nmake\r\nmake install\r\n\r\n\r\n"
+        "content": "#!/bin/sh\r\n\r\ncd /home/app/src\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-command-group=www-data  --with-command-user=www-data --with-webdir=/home/app/www --with-mail=/usr/sbin/sendmail\r\nmake all\r\nmake install\r\nmake install-config\r\n\r\necho $nagios_admin_password >/home/app/password\r\n\r\nwget https://nagios-plugins.org/download/nagios-plugins-2.2.1.tar.gz\r\ntar -xzf nagios-plugins*.tar.gz\r\ncd nagios-plugins-2.2.1/\r\nsh ./configure  --with-nagios-user=www-data  --with-nagios-group=www-data --with-openssl\r\nmake\r\nmake install\r\n\r\n\r\n"
       },
       "first_run": {
         "language": "sh",
-        "content": "#!/bin/sh\r\nconfig_dirs=\"hosts host_groups services service_groups contacts contact_groups timeperiods commands\"\r\n\r\ncp -r /usr/local/nagios/etc /home/fs/\r\nrm -r /usr/local/nagios/etc\r\nln -s /home/fs/etc /usr/local/nagios/\r\n\r\nnagios_admin_password=`cat /home/app/password`\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagiosadmin $nagios_admin_password\r\nrm /home/app/password\r\ncp -r /usr/local/nagios/var /home/fs/\r\nrm -r /usr/local/nagios/var\r\nln -s /home/fs/var /usr/local/nagios/\r\nmkdir /home/fs/var/rw/\r\n\r\n#sudo -u data-user cp src/sample-config/*.cfg /home/fs/etc/\r\n#sudo -u data-user mkdir /home/fs/etc/objects\r\n#sudo -u data-user cp src/sample-config/template-object/*.cfg  /home/fs/etc/objects\r\n for config_dir in $config_dirs\r\n  do\r\n   mkdir /home/fs/etc/$config_dir\r\n done\r\nsudo -u data-user cp -r /home/engines/templates/fs_src/etc/* /home/fs/etc"
+        "content": "#!/bin/sh\r\nconfig_dirs=\"hosts host_groups services service_groups contacts contact_groups timeperiods commands\"\r\n\r\ncp -r /usr/local/nagios/etc /home/fs/\r\nrm -r /usr/local/nagios/etc\r\nln -s /home/fs/etc /usr/local/nagios/\r\n\r\nnagios_admin_password=`cat /home/app/password`\r\nhtpasswd -c -b /usr/local/nagios/etc/htpasswd.users nagiosadmin $nagios_admin_password\r\nrm /home/app/password\r\ncp -r /usr/local/nagios/var /home/fs/\r\nrm -r /usr/local/nagios/var\r\nln -s /home/fs/var /usr/local/nagios/\r\nmkdir /home/fs/var/rw/\r\n\r\n#sudo -u data-user cp src/sample-config/*.cfg /home/fs/etc/\r\n#sudo -u data-user mkdir /home/fs/etc/objects\r\n#sudo -u data-user cp src/sample-config/template-object/*.cfg  /home/fs/etc/objects\r\n for config_dir in $config_dirs\r\n  do\r\n   mkdir /home/fs/etc/$config_dir\r\n done\r\n cp -r /home/engines/templates/fs_src/etc/* /home/fs/etc"
       }
     },
     "system_packages": [
@@ -270,7 +270,7 @@
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/sh\r\n\r\nmkdir -p /home/fs/etc/templates/hosts/$hostname\r\ncd /home/fs/etc/templates/hosts/$hostname\r\necho -n $hostname > hostname\r\necho -n $max_check_attempts > max_check_attempts\r\necho -n $check_period > check_period\r\necho -n $contacts > contacts\r\necho -n $address > address\r\necho -n $contact_groups > contact_groups\r\necho -n $notification_interval  > notification_interval\r\necho -n $notification_period > notification_period \r\necho -n $config_fragment > config_fragment\r\n\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    address $address\r\n    max_check_attempts $max_check_attempts\r\n    check_period\t$check_period\r\n    contacts\t$contacts\r\n    contact_groups\t$contact_groups\r\n\tnotification_interval $notification_interval\r\n\tnotification_period $notification_period\r\n\t$config_fragment\r\n\t\" >/home/fs/etc/hosts/$hostname.cfg\r\n\t\r\n\tif ! test -z $address \r\n\t then \r\n\t  echo address $address >> /home/fs/etc/hosts/$hostname.cfg\r\n\tfi\r\n\t\r\n\techo \"}\" >> /home/fs/etc/hosts/$hostname.cfg\r\n"
+          "content": "#!/bin/sh\r\n\r\nmkdir -p /home/fs/etc/templates/hosts/$hostname\r\ncd /home/fs/etc/templates/hosts/$hostname\r\necho -n $hostname > hostname\r\necho -n $max_check_attempts > max_check_attempts\r\necho -n $check_period > check_period\r\necho -n $contacts > contacts\r\necho -n $address > address\r\necho -n $contact_groups > contact_groups\r\necho -n $notification_interval  > notification_interval\r\necho -n $notification_period > notification_period \r\necho -n $config_fragment > config_fragment\r\n\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    max_check_attempts $max_check_attempts\r\n    check_period\t$check_period\r\n    contacts\t$contacts\r\n    contact_groups\t$contact_groups\r\n\tnotification_interval $notification_interval\r\n\tnotification_period $notification_period\r\n\t$config_fragment\r\n\t\" >/home/fs/etc/hosts/$hostname.cfg\r\n\t\r\n\tif ! test -z $address \r\n\t then \r\n\t  echo address $address >> /home/fs/etc/hosts/$hostname.cfg\r\n\tfi\r\n\t\r\n\techo \"}\" >> /home/fs/etc/hosts/$hostname.cfg\r\n"
         }
       },
       {
@@ -384,7 +384,7 @@
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/sh\r\n\r\nservicename=`echo $service_description | sed \"s/ /_/g\"`\r\nmkdir -p  /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\ncd /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\necho -n $hostname > hostname\r\necho -n $use > use\r\necho -n $service_description > service_description\r\necho -n $check_command > check_command\r\necho -n $check_command_args > check_command_args\r\necho -n $config_fragment > config_fragment\r\n\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    use $use \r\n    service_description $service_description\r\n    check_command $check_command $check_command_args\r\n\t$config_fragment\r\n\t}\" >/home/fs/etc/services/$hostname_$servicename.cfg\r\n"
+          "content": "#!/bin/sh\r\n\r\nservicename=`echo $service_description | sed \"s/ /_/g\"`\r\nmkdir -p  /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\ncd /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\necho -n $hostname > hostname\r\necho -n $use > use\r\necho -n $service_description > service_description\r\necho -n $check_command > check_command\r\necho -n $check_command_args > check_command_args\r\necho -n $config_fragment > config_fragment\r\n\r\n\r\necho \"define service {\r\n    host_name\t$hostname\r\n    use $use \r\n    service_description $service_description\r\n    check_command $check_command $check_command_args\r\n\t$config_fragment\r\n\t}\" >/home/fs/etc/services/${hostname}_${servicename}.cfg\r\n"
         }
       },
       {
