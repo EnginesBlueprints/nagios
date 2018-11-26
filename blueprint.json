@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-26T11:24:14+11:00"
+    "timestamp": "2018-11-26T11:38:42+11:00"
   },
   "software": {
     "base": {
@@ -237,7 +237,7 @@
           },
           {
             "name": "config_fragment",
-            "value": "define host {     host_name    host_name    #alias    alias    # display_name    display_name    # address    address    # parents    host_names    # importance    #    # hostgroups    hostgroup_names    # check_command    command_name    # initial_state    [o,d,u]     max_check_attempts    #    # check_interval    #    # retry_interval    #    # active_checks_enabled    [0/1]    # passive_checks_enabled    [0/1]     check_period    timeperiod_name    # obsess_over_host|obsess    [0/1]    # check_freshness    [0/1]    # freshness_threshold    #    # event_handler    command_name    # event_handler_enabled    [0/1]    # low_flap_threshold    #    # high_flap_threshold    #    # flap_detection_enabled    [0/1]    # flap_detection_options    [o,d,u]    # process_perf_data    [0/1]    # retain_status_information    [0/1]    # retain_nonstatus_information    [0/1]     contacts    contacts     contact_groups    contact_groups     notification_interval    #    # first_notification_delay    #     notification_period    timeperiod_name    # notification_options    [d,u,r,f,s]    # notifications_enabled    [0/1]    # stalking_options    [o,d,u,N]    # notes    note_string    # notes_url    url    # action_url    url    # icon_image    image_file    # icon_image_alt    alt_string    # vrml_image    image_file    # statusmap_image    image_file    # 2d_coords    x_coord,y_coord    # 3d_coords    x_coord,y_coord,z_coord } ",
+            "value": "#alias    alias    \r\n# display_name    display_name    \r\n# address    address    \r\n# parents    host_names    \r\n# importance    #   \r\n# initial_state    [o,d,u]  \r\n#retry_interval    #    \r\n# active_checks_enabled    [0/1]    \r\n# passive_checks_enabled    [0/1]     \r\n# obsess_over_host|obsess    [0/1]    \r\n# check_freshness    [0/1]    \r\n# freshness_threshold    #    \r\n# event_handler    command_name    \r\n# event_handler_enabled    [0/1]    \r\n# low_flap_threshold    #    \r\n# high_flap_threshold    #    \r\n# flap_detection_enabled    [0/1]    \r\n# flap_detection_options    [o,d,u]    \r\n# process_perf_data    [0/1]    \r\n# retain_status_information    [0/1]    \r\n# retain_nonstatus_information    [0/1]   \r\n # first_notification_delay    # \r\n # notification_options    [d,u,r,f,s]    \r\n# notifications_enabled    [0/1]    \r\n# stalking_options    [o,d,u,N]    \r\n# notes    note_string    \r\n# notes_url    url    \r\n# action_url    url    \r\n# icon_image    image_file    \r\n# icon_image_alt    alt_string    \r\n# vrml_image    image_file    \r\n# statusmap_image    image_file    \r\n# 2d_coords    x_coord,y_coord    \r\n# 3d_coords    x_coord,y_coord,z_coord ",
             "input": {
               "type": "text"
             }
@@ -277,11 +277,17 @@
             "input": {
               "type": "string"
             }
+          },
+          {
+            "name": "parent",
+            "input": {
+              "type": "string"
+            }
           }
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/sh\r\n\r\nmkdir -p /home/fs/etc/templates/hosts/$hostname\r\ncd /home/fs/etc/templates/hosts/$hostname\r\necho -n $hostname > hostname\r\necho -n $max_check_attempts > max_check_attempts\r\necho -n $check_period > check_period\r\necho -n $contacts > contacts\r\necho -n $address > address\r\necho -n $contact_groups > contact_groups\r\necho -n $notification_interval  > notification_interval\r\necho -n $notification_period > notification_period \r\necho -n $config_fragment > config_fragment\r\n\r\necho \" $hostgroup_name\" >> hostgroup_name\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    max_check_attempts $max_check_attempts\r\n    check_period\t$check_period\r\n    contacts\t$contacts\r\n    contact_groups\t$contact_groups\r\n\tnotification_interval $notification_interval\r\n\tnotification_period $notification_period\r\n\t$config_fragment\r\n\t\" >/home/fs/etc/hosts/$hostname.cfg\r\n\t\r\n\tif ! test -z $address \r\n\t then \r\n\t  echo address $address >> /home/fs/etc/hosts/$hostname.cfg\r\n\tfi\r\n\tif ! test -z $hostgroup_name\r\n\t then \r\n\t  echo hostgroups $hostgroup_name >> /home/fs/etc/hosts/$hostname.cfg\r\n\tfi\t\r\n\techo \"}\" >> /home/fs/etc/hosts/$hostname.cfg\r\n"
+          "content": "#!/bin/sh\r\n\r\nmkdir -p /home/fs/etc/templates/hosts/$hostname\r\ncd /home/fs/etc/templates/hosts/$hostname\r\necho -n $hostname > hostname\r\necho -n $max_check_attempts > max_check_attempts\r\necho -n $check_period > check_period\r\necho -n $contacts > contacts\r\necho -n $address > address\r\necho -n $contact_groups > contact_groups\r\necho -n $notification_interval  > notification_interval\r\necho -n $notification_period > notification_period \r\necho -n $config_fragment > config_fragment\r\necho -n parent > parent\r\necho \" $hostgroup_name\" >> hostgroup_name\r\n\r\necho \"define host {\r\n    host_name\t$hostname\r\n    max_check_attempts $max_check_attempts\r\n    check_period\t$check_period\r\n    contacts\t$contacts\r\n    contact_groups\t$contact_groups\r\n\tnotification_interval $notification_interval\r\n\tnotification_period $notification_period\r\n\t$config_fragment\r\n\t\" >/home/fs/etc/hosts/$hostname.cfg\r\n\t\r\n\tif ! test -z $address \r\n\t then \r\n\t  echo address $address >> /home/fs/etc/hosts/$hostname.cfg\r\n\tfi\r\n\t\tif ! test -z $parent \r\n\t then \r\n\t  echo parent $parent >> /home/fs/etc/hosts/$hostname.cfg\r\n\tfi\r\n\tif ! test -z $hostgroup_name\r\n\t then \r\n\t  echo hostgroups $hostgroup_name >> /home/fs/etc/hosts/$hostname.cfg\r\n\tfi\t\r\n\techo \"}\" >> /home/fs/etc/hosts/$hostname.cfg\r\n"
         }
       },
       {
@@ -323,7 +329,7 @@
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/bash\r\n\r\n\r\n\r\nif test -z $hostname\r\n then\r\n  echo '{\"error\":\"Hostname required\"}'\r\n  exit 2\r\nfi\r\n\r\nif ! test -d /home/fs/etc/templates/hosts/$hostname\r\n then \r\n echo '{\"error\":\"No such Host\"}'\r\n  exit 2\r\nfi  \r\ncd /home/fs/etc/templates/hosts/$hostname\r\nhostname=`cat > hostname`\r\nmax_check_attempts=`cat > max_check_attempts`\r\ncheck_period=`cat > check_period`\r\ncontacts=`cat contacts`\r\naddress=`cat address`\r\ncontact_groups=`cat contact_groups`\r\nnotification_interval=`cat notification_interval`\r\nnotification_period=`cat notification_period `\r\nconfig_fragment=`cat  config_fragment`\r\nhostgroup_name=`cat  hostgroup_name`\r\nhostgroup_names=`echo $hostgroup_name | sed \"s/ /,/g\"`\r\necho '{\"hostname\":\"'$hostname'\",\r\n\"max_check_attempts\":\"'$max_check_attempts'\",\r\n\"check_period\":\"'$check_period'\",\r\n\"address\":\"'$address'\",\r\n\"contacts\":\"'$contacts'\",\r\n\"contact_groups\":\"'$contact_groups'\",\r\n\"notification_interval\":\"'$notification_interval'\",\r\n\"notification_period\":\"'$notification_period'\",\r\n\"config_fragment\":\"'$config_fragment'\",\r\n\"host_groups\":['$hostgroup_names']}'"
+          "content": "#!/bin/bash\r\n\r\n\r\n\r\nif test -z $hostname\r\n then\r\n  echo '{\"error\":\"Hostname required\"}'\r\n  exit 2\r\nfi\r\n\r\nif ! test -d /home/fs/etc/templates/hosts/$hostname\r\n then \r\n echo '{\"error\":\"No such Host\"}'\r\n  exit 2\r\nfi  \r\ncd /home/fs/etc/templates/hosts/$hostname\r\nhostname=`cat > hostname`\r\nmax_check_attempts=`cat > max_check_attempts`\r\ncheck_period=`cat > check_period`\r\ncontacts=`cat contacts`\r\naddress=`cat address`\r\ncontact_groups=`cat contact_groups`\r\nnotification_interval=`cat notification_interval`\r\nnotification_period=`cat notification_period `\r\nconfig_fragment=`cat  config_fragment`\r\nhostgroup_name=`cat  hostgroup_name`\r\nhostgroup_names=`echo $hostgroup_name | sed \"s/ /,/g\"`\r\nparent=`cat parent`\r\necho '{\"hostname\":\"'$hostname'\",\r\n\"max_check_attempts\":\"'$max_check_attempts'\",\r\n\"check_period\":\"'$check_period'\",\r\n\"address\":\"'$address'\",\r\n\"contacts\":\"'$contacts'\",\r\n\"contact_groups\":\"'$contact_groups'\",\r\n\"notification_interval\":\"'$notification_interval'\",\r\n\"notification_period\":\"'$notification_period'\",\r\n\"config_fragment\":\"'$config_fragment'\",\r\n\"config_fragment\":\"'$parent'\",\r\n\"host_groups\":['$hostgroup_names']}'"
         }
       },
       {
