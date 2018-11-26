@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2018-11-26T11:19:59+11:00"
+    "timestamp": "2018-11-26T11:24:14+11:00"
   },
   "software": {
     "base": {
@@ -323,7 +323,7 @@
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/bash\r\n\r\n\r\n\r\nif test -z $hostname\r\n then\r\n  echo '{\"error\":\"Hostname required\"}'\r\n  exit 2\r\nfi\r\n\r\n\r\ncd /home/fs/etc/templates/hosts/$hostname\r\nhostname=`cat > hostname`\r\nmax_check_attempts=`cat > max_check_attempts`\r\ncheck_period=`cat > check_period`\r\ncontacts=`cat contacts`\r\naddress=`cat address`\r\ncontact_groups=`cat contact_groups`\r\nnotification_interval=`cat notification_interval`\r\nnotification_period=`cat notification_period `\r\nconfig_fragment=`cat  config_fragment`\r\nhostgroup_name=`cat  hostgroup_name`\r\nhostgroup_names=`echo $hostgroup_name | sed \"s/ /,/g\"`\r\necho '{\"hostname\":\"'$hostname'\",\r\n\"max_check_attempts\":\"'$max_check_attempts'\",\r\n\"check_period\":\"'$check_period'\",\r\n\"address\":\"'$address'\",\r\n\"contacts\":\"'$contacts'\",\r\n\"contact_groups\":\"'$contact_groups'\",\r\n\"notification_interval\":\"'$notification_interval'\",\r\n\"notification_period\":\"'$notification_period'\",\r\n\"config_fragment\":\"'$config_fragment'\",\r\n\"host_groups\":['$hostgroup_names']}'"
+          "content": "#!/bin/bash\r\n\r\n\r\n\r\nif test -z $hostname\r\n then\r\n  echo '{\"error\":\"Hostname required\"}'\r\n  exit 2\r\nfi\r\n\r\nif ! test -d /home/fs/etc/templates/hosts/$hostname\r\n then \r\n echo '{\"error\":\"No such Host\"}'\r\n  exit 2\r\nfi  \r\ncd /home/fs/etc/templates/hosts/$hostname\r\nhostname=`cat > hostname`\r\nmax_check_attempts=`cat > max_check_attempts`\r\ncheck_period=`cat > check_period`\r\ncontacts=`cat contacts`\r\naddress=`cat address`\r\ncontact_groups=`cat contact_groups`\r\nnotification_interval=`cat notification_interval`\r\nnotification_period=`cat notification_period `\r\nconfig_fragment=`cat  config_fragment`\r\nhostgroup_name=`cat  hostgroup_name`\r\nhostgroup_names=`echo $hostgroup_name | sed \"s/ /,/g\"`\r\necho '{\"hostname\":\"'$hostname'\",\r\n\"max_check_attempts\":\"'$max_check_attempts'\",\r\n\"check_period\":\"'$check_period'\",\r\n\"address\":\"'$address'\",\r\n\"contacts\":\"'$contacts'\",\r\n\"contact_groups\":\"'$contact_groups'\",\r\n\"notification_interval\":\"'$notification_interval'\",\r\n\"notification_period\":\"'$notification_period'\",\r\n\"config_fragment\":\"'$config_fragment'\",\r\n\"host_groups\":['$hostgroup_names']}'"
         }
       },
       {
@@ -563,7 +563,7 @@
         ],
         "script": {
           "language": "sh",
-          "content": "#!/bin/sh\r\n\r\nif test -z $hostname\r\n then\r\n  echo '{\"error\":\"Hostname required\"}'\r\n  exit 2\r\nfi\r\n\r\nif test -z $servicename\r\n then\r\n  echo '{\"error\":\"servicename required\"}'\r\n  exit 2\r\nfi\r\n\r\ncd /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\nhostname=`cat hostname`\r\nuse=`cat use`\r\nservice_description=`cat service_description`\r\ncheck_command=`cat check_command`\r\ncheck_command_args=`cat check_command_args`\r\nconfig_fragment=`cat config_fragment`\r\n\r\necho '{\"hostname\":\"'$hostname'\",\r\n\"servicename\":\"'$servicename'\",\r\n\"service_description\":\"'$service_description'\",\r\n\"check_command\":\"'$check_command'\",\r\n\"check_command_args\":\"'$check_command_args'\",\r\n\"config_fragment\":\"'$config_fragment'\",\r\n\"use\":\"'$use'\"}'\r\n"
+          "content": "#!/bin/sh\r\n\r\nif test -z $hostname\r\n then\r\n  echo '{\"error\":\"Hostname required\"}'\r\n  exit 2\r\nfi\r\n\r\nif test -z $servicename\r\n then\r\n  echo '{\"error\":\"servicename required\"}'\r\n  exit 2\r\nfi\r\n\r\n\r\nif ! test -d /home/fs/etc/templates/hosts/$hostname\r\n then \r\n echo '{\"error\":\"No such Host\"}'\r\n  exit 2\r\nfi \r\n\r\n\r\nif ! test -d /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\n then \r\n echo '{\"error\":\"No such service\"}'\r\n  exit 2\r\nfi \r\n\r\ncd /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\nhostname=`cat hostname`\r\nuse=`cat use`\r\nservice_description=`cat service_description`\r\ncheck_command=`cat check_command`\r\ncheck_command_args=`cat check_command_args`\r\nconfig_fragment=`cat config_fragment`\r\n\r\necho '{\"hostname\":\"'$hostname'\",\r\n\"servicename\":\"'$servicename'\",\r\n\"service_description\":\"'$service_description'\",\r\n\"check_command\":\"'$check_command'\",\r\n\"check_command_args\":\"'$check_command_args'\",\r\n\"config_fragment\":\"'$config_fragment'\",\r\n\"use\":\"'$use'\"}'\r\n"
         }
       }
     ],
