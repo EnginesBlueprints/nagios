@@ -16,7 +16,7 @@
         "patch": 0
       }
     },
-    "timestamp": "2019-04-09T13:32:50+10:00"
+    "timestamp": "2019-04-09T13:34:05+10:00"
   },
   "software": {
     "base": {
@@ -570,6 +570,13 @@
         "script": {
           "language": "sh",
           "content": "#!/bin/sh\r\n\r\nif test -z $hostname\r\n then\r\n  echo '{\"error\":\"Hostname required\"}'\r\n  exit 2\r\nfi\r\n\r\nif test -z $servicename\r\n then\r\n  echo '{\"error\":\"servicename required\"}'\r\n  exit 2\r\nfi\r\n\r\n\r\nif ! test -d /home/fs/etc/templates/hosts/$hostname\r\n then \r\n echo '{\"error\":\"No such Host\"}'\r\n  exit 2\r\nfi \r\n\r\n\r\nif ! test -d /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\n then \r\n echo '{\"error\":\"No such service\"}'\r\n  exit 2\r\nfi \r\n\r\ncd /home/fs/etc/templates/hosts/$hostname/services/$servicename\r\nhostname=`cat hostname`\r\nuse=`cat use`\r\nservice_description=`cat service_description`\r\ncheck_command=`cat check_command`\r\ncheck_command_args=`cat check_command_args`\r\nconfig_fragment=`cat config_fragment`\r\n\r\necho '{\"hostname\":\"'$hostname'\",\r\n\"servicename\":\"'$servicename'\",\r\n\"service_description\":\"'$service_description'\",\r\n\"check_command\":\"'$check_command'\",\r\n\"check_command_args\":\"'$check_command_args'\",\r\n\"config_fragment\":\"'$config_fragment'\",\r\n\"use\":\"'$use'\"}'\r\n"
+        }
+      },
+      {
+        "name": "check_config",
+        "return_type": "plain_text",
+        "script": {
+          "content": "#!/bin/sh\r\n /usr/local/nagios/bin/nagios -v  /home/fs/etc/nagios.cfg "
         }
       }
     ],
